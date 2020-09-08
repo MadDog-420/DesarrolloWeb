@@ -39,6 +39,28 @@
 			<td>Calific. 3</td>
 		</tr>
 	</table>
+	<h2>Imágenes en una página web</h2>
+	<img src="https://2.bp.blogspot.com/-J5dtIRU_dqo/WZqgWuk5r3I/AAAAAAAAAAY/9CCoDfgsfyEPfAJURbzewU5wAiEZ3mIgQCLcBGAs/s1600/Pingu%25CC%2588ino2.jpg"
+	width="200" align="left" alt="No se puede encontrar la imagen">
+	<h2>Tabla con imágenes</h2>
+	<table style="margin-top:20px;" cellspacing="4" cellpadding="3" border="1">
+		<tr>
+			<th>Pinguino</th>
+			<th>Desierto</th>
+			<th>Tulipanes</th>
+		</tr>
+		<tr>
+			<td><img src="https://2.bp.blogspot.com/-J5dtIRU_dqo/WZqgWuk5r3I/AAAAAAAAAAY/9CCoDfgsfyEPfAJURbzewU5wAiEZ3mIgQCLcBGAs/s1600/Pingu%25CC%2588ino2.jpg"
+	width="200" alt="No se puede encontrar la imagen">
+			</td>
+			<td><img src="https://estaticos.muyinteresante.es/media/cache/760x570_thumb/uploads/images/article/5ac338575bafe812fe03d598/sahara_0.jpg"
+	width="200" alt="No se puede encontrar la imagen">
+			</td>
+			<td><img src="https://www.hogarmania.com/archivos/201208/tulipan-1280x720x80xX.jpg"
+	width="200" alt="No se puede encontrar la imagen">
+			</td>
+		</tr>
+	</table>
 </body>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </html>
