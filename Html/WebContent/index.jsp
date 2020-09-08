@@ -45,19 +45,19 @@
 	<h2>Tabla con imágenes</h2>
 	<table style="margin-top:20px;" cellspacing="4" cellpadding="3" border="1">
 		<tr>
-			<th>Pinguino</th>
-			<th>Desierto</th>
-			<th>Tulipanes</th>
+			<th align="center">Pinguino</th>
+			<th align="center">Desierto</th>
+			<th align="center">Tulipanes</th>
 		</tr>
 		<tr>
 			<td><img src="https://2.bp.blogspot.com/-J5dtIRU_dqo/WZqgWuk5r3I/AAAAAAAAAAY/9CCoDfgsfyEPfAJURbzewU5wAiEZ3mIgQCLcBGAs/s1600/Pingu%25CC%2588ino2.jpg"
-	width="200" alt="No se puede encontrar la imagen">
+	width="200" align="center" alt="No se puede mostrar">
 			</td>
 			<td><img src="https://estaticos.muyinteresante.es/media/cache/760x570_thumb/uploads/images/article/5ac338575bafe812fe03d598/sahara_0.jpg"
-	width="200" alt="No se puede encontrar la imagen">
+	width="200" align="center"  alt="No se puede mostrar">
 			</td>
 			<td><img src="https://www.hogarmania.com/archivos/201208/tulipan-1280x720x80xX.jpg"
-	width="200" alt="No se puede encontrar la imagen">
+	width="200" align="center" alt="No se puede mostrar">
 			</td>
 		</tr>
 	</table>
