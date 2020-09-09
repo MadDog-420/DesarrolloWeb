@@ -22,21 +22,21 @@
               <form>
                 <div class="top-wrapper">
                   <div class="input">
-                    <label>Name</label>
+                    <label>Nombre</label>
                     <input type="text" name="name"/>
                   </div>
                   <div class="input">
-                    <label>Phone</label>
+                    <label>Teléfono</label>
                     <input type="text" name="phone"/>
                   </div>
                   <div class="input">
-                    <label>Email</label>
+                    <label>Correo</label>
                     <input type="text" name="_replyto"/>
                   </div>
                 </div>
                 <div class="bottom-wrapper">
                   <div class="input">
-                    <label>Subject</label>
+                    <label>Asunto</label>
                     <input type="text" name="_subject"/>
                   </div>
                   <div class="input">
