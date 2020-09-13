@@ -4,7 +4,7 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<title>Insert title here</title>
+<title>Form</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -40,11 +40,11 @@
                     <input type="text" name="_subject"/>
                   </div>
                   <div class="input">
-                    <label>Message</label>
+                    <label>Mensaje</label>
                     <textarea rows="5" name="message"></textarea>
                   </div>
                   <div class="submit">
-                    <div class="submit-card" on-click="toggle('flipCard')">Send Mail</div>
+                    <div class="submit-card" on-click="toggle('flipCard')">Enviar correo</div>
                   </div>
                 </div>
               </form>
