@@ -12,6 +12,8 @@
 <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
 <!-- JQuery UI-->
 <script type="text/javascript" src="https://code.jquery.com/ui/1.11.1/jquery-ui.min.js"></script>
+<!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <link rel="stylesheet" href="main.css">
 </head>
 
@@ -155,7 +157,11 @@
                     <ul class="collapse list-unstyled" id="homeSubmenu">
                     <% while(rs_t.next()) {%>
                         <li>
-                            <a href="#"><%=rs_t.getString("content")%></a>
+                        	<div class="to_display"><%=rs_t.getString("content")%></div>
+                        	<form method="post">
+                        		<input id="<%=rs_t.getString("name")%>" type="hidden" name="<%=rs_t.getString("nice_name")%>" value="" >
+                        		<input type="submit" value="agregar">
+                        	</form>
                         </li>
                     <% } %>
                     </ul>
@@ -199,8 +205,6 @@
                     </button>
 
                     <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <form method="post">
-	    				<input id="html" type="hidden" name="html" value="">
 	    
                         <ul class="nav navbar-nav ml-auto">
                             <li class="nav-item active">
@@ -360,7 +364,13 @@
 		        'w': '.ui-resizable-w'
 		    }
 		});
-		$( '.draggable' ).draggable().on('click', function(){
+	  $( '#container .draggable' ).draggable({
+		  drag: function(event,ui){
+		      dragposition = ui.position;
+		   }
+	  })
+		$( '#container .draggable' ).draggable().on('click', function(){
+			
 		    if ( $(this).is('.ui-draggable-dragging') ) {
 		        return;
 		    } else {
@@ -376,6 +386,7 @@
 		});
 		
   </script>
+  
   <script type="text/javascript">
 
 	  // tell the embed parent frame the height of the content
@@ -389,6 +400,7 @@
 	  // always overwrite window.name, in case users try to set it manually
 	  window.name = "result"
    </script>
+   
    <script>
 	  $(function(){
 		  var $myDiv = $('#container');
@@ -402,101 +414,45 @@
 		})
 		
   </script>
+  
   <script type="text/javascript">
-		$('body').mouseover(function() {
-			var elementHtml = $("#container").html();
+  		var elementHtml
+		$("body").mouseover(function() {
+			elementHtml = $("#container").html();
 			$("#html_file").val(elementHtml);
 		});
-// <div id="new-element-1">Hello world.</div>
-
+  		
+		$("#titulo_1").click(function() {
+			elementHtml = $("#container").html();
+			var cont = $("this").val();
+			$("#this").val(cont+elementHtml);
+			console.log($("#this").val());
+		});
+		$("#titulo_2").click(function() {
+			elementHtml = $("#container").html();
+			var cont = $("this").val();
+			$("#this").val(cont+elementHtml);
+		});
+		$("#titulo_3").click(function() {
+			elementHtml = $("#container").html();
+			var cont = $("this").val();
+			$("#this").val(cont+elementHtml);
+		});
+		$("#parrafo").click(function() {
+			elementHtml = $("#container").html();
+			var cont = $("this").val()
+			$("#this").val(cont+elementHtml);
+		});
   </script>
-  <!--  <script>
-    var container = document.querySelector("#container");
-    var activeItem = null;
-
-    var active = false;
-
-    container.addEventListener("touchstart", dragStart, false);
-    container.addEventListener("touchend", dragEnd, false);
-    container.addEventListener("touchmove", drag, false);
-
-    container.addEventListener("mousedown", dragStart, false);
-    container.addEventListener("mouseup", dragEnd, false);
-    container.addEventListener("mousemove", drag, false);
-
-    function dragStart(e) {
-
-      if (e.target !== e.currentTarget) {
-        active = true;
-
-        // this is the item we are interacting with
-        activeItem = e.target;
-
-        if (activeItem !== null) {
-          if (!activeItem.xOffset) {
-            activeItem.xOffset = 0;
-          }
-
-          if (!activeItem.yOffset) {
-            activeItem.yOffset = 0;
-          }
-
-          if (e.type === "touchstart") {
-            activeItem.initialX = e.touches[0].clientX - activeItem.xOffset;
-            activeItem.initialY = e.touches[0].clientY - activeItem.yOffset;
-          } else {
-            console.log("moving");
-            activeItem.initialX = e.clientX - activeItem.xOffset;
-            activeItem.initialY = e.clientY - activeItem.yOffset;
-          }
-        }
-      }
-    }
-
-    function dragEnd(e) {
-      if (activeItem !== null) {
-        activeItem.initialX = activeItem.currentX;
-        activeItem.initialY = activeItem.currentY;
-      }
-
-      active = false;
-      activeItem = null;
-    }
-
-    function drag(e) {
-    	
-      if (active) {
-    	  e.preventDefault();
-    	  
-        if (e.type === "touchmove") {
-          activeItem.currentX = e.touches[0].clientX - activeItem.initialX;
-          activeItem.currentY = e.touches[0].clientY - activeItem.initialY;
-        } else {
-          activeItem.currentX = e.clientX - activeItem.initialX;
-          activeItem.currentY = e.clientY - activeItem.initialY;
-        }
-
-        activeItem.xOffset = activeItem.currentX;
-        activeItem.yOffset = activeItem.currentY;
-
-        setTranslate(activeItem.currentX, activeItem.currentY, activeItem);
-      }
-      
-    }
-
-    function setTranslate(xPos, yPos, elem) {
-      elem.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
-    }
-    
-  </script>-->
-  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
   <script type="text/javascript">
         $(document).ready(function () {
             $('#sidebarCollapse').on('click', function () {
                 $('#sidebar').toggleClass('active');
             });
         });
-  </script>
+    </script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
 </body>
 </html>
