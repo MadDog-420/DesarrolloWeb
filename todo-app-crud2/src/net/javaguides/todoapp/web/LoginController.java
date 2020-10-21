@@ -49,8 +49,6 @@ public class LoginController extends HttpServlet {
 
 		try {
 			if (loginDao.validate(loginBean)) {
-				List<Todo> listTodo = todoDAO.selectAllTodos();
-				request.setAttribute("listTodo", listTodo);
 				RequestDispatcher dispatcher = request.getRequestDispatcher("todo/todo-list.jsp");
 				dispatcher.forward(request, response);
 			} else {
