@@ -94,7 +94,12 @@
 										<c:out value='${user.nombre}' /> <c:out value='${user.apellidos}' />
                                     </div>
                                     <div class="widget-subheading">
-         								<c:out value='${user_tipo}'/>
+         								<c:if test="${user_tipo == 1}">
+         									Estudiante
+         								</c:if>
+         								<c:if test="${user_tipo == 2}">
+         									Docente
+         								</c:if>
                                     </div>
                                 </div>
                                 <div class="widget-content-right header-user-info ml-3">
@@ -429,64 +434,105 @@
                                     <span>En curso</span>
                                 </a>
                             </li>
+                            
+                     	<c:if test="${user_tipo == 1}">
                             <li class="nav-item">
                                 <a role="tab" class="nav-link" id="tab-2" data-toggle="tab" href="#tab-content-2">
                                     <span>Aun sin cursar</span>
                                 </a>
                             </li>
+                       	</c:if>
+                       	
                         </ul>
                         <div class="tab-content">
-                        	<div class="tab-pane tabs-animation fade show active" id="tab-content-1" role="tabpanel">
+                        	
+                            <!-- Estudiantes -->  
+                          	<c:if test="${user_tipo == 1}">
+                          	<div class="tab-pane tabs-animation fade show active" id="tab-content-1" role="tabpanel">
                                 <div class="row">
-                        	<!-- Asignaturas en curso -->
-                        		<c:forEach var="joined" items="${listTodo}">
-									<div class="col-md-6">
-                                        <div class="main-card mb-3 card"><img width="100%" src="https://www.euneighbours.eu/sites/default/files/styles/node_image_wide/public/2018-09/Office%20compiter%20documents%20IT%20-%20Unsplash.jpg?itok=an6eZhR2">
-                                            <div class="card-body">
-                                            	<h5 class="card-title"><c:out value="${joined.asignatura}" /></h5>
-                                            	<h6 class="card-subtitle"><c:out value="${joined.descripcion}" /></h6>
-                                            	<b>Docente: </b><c:out value="${joined.docente}" />
-                                                <form action="<%=request.getContextPath()%>/dashboard" method="post">
-                                            		<input name="id_aula" type="hidden" value="<c:out value="${joined.id}" />">
-                                            		<input name="action" type="hidden" value="disjoin">
-                                            		<button class="btn btn-danger" type="submit" style="width: 100%;">Rendirse</button>
-                                            	</form>
-                                            	
-                                            	<!--  <td><button (click)="updateTodo(todo.id)" class="btn btn-success">Update</button>
-			          							<button (click)="deleteTodo(todo.id)" class="btn btn-warning">Delete</button></td> -->
-                                            </div>
-                                        </div>
-                                    </div>
-								</c:forEach>
-          
-                                </div>
-                            </div>
+                              			
+	                        	<!-- Asignaturas en curso -->
+	                        		<c:forEach var="joined" items="${listTodo}">
+										<div class="col-md-6">
+	                                        <div class="main-card mb-3 card"><img width="100%" src="https://www.euneighbours.eu/sites/default/files/styles/node_image_wide/public/2018-09/Office%20compiter%20documents%20IT%20-%20Unsplash.jpg?itok=an6eZhR2">
+	                                            <div class="card-body">
+	                                            	<h5 class="card-title"><c:out value="${joined.asignatura}" /></h5>
+	                                            	<h6 class="card-subtitle"><c:out value="${joined.descripcion}" /></h6>
+	                                            	<b>Docente: </b><c:out value="${joined.docente}" />
+	                                                <form action="<%=request.getContextPath()%>/dashboard" method="post">
+	                                            		<input name="id_aula" type="hidden" value="<c:out value="${joined.id}" />">
+	                                            		<input name="action" type="hidden" value="disjoin">
+	                                            		<button class="btn btn-danger" type="submit" style="width: 100%;">Rendirse</button>
+	                                            	</form>
+	                                            	
+	                                            	<!--  <td><button (click)="updateTodo(todo.id)" class="btn btn-success">Update</button>
+				          							<button (click)="deleteTodo(todo.id)" class="btn btn-warning">Delete</button></td> -->
+	                                            </div>
+	                                        </div>
+	                                    </div>
+									</c:forEach>
+	          
+	                             </div>
+	                         </div>
                       
-                            <div class="tab-pane tabs-animation fade" id="tab-content-2" role="tabpanel">
+	                         <div class="tab-pane tabs-animation fade" id="tab-content-2" role="tabpanel">
+	                              <div class="row">
+	                            <!-- Asignaturas sin cursar -->
+	                               	<c:forEach var="noJoined" items="${listNoTodo}">
+										<div class="col-md-6">
+	                                        <div class="main-card mb-3 card"><img width="100%" src="https://www.euneighbours.eu/sites/default/files/styles/node_image_wide/public/2018-09/Office%20compiter%20documents%20IT%20-%20Unsplash.jpg?itok=an6eZhR2">
+	                                            <div class="card-body">
+	                                            	<h5 class="card-title"><c:out value="${noJoined.asignatura}" /></h5>
+	                                            	<h6 class="card-subtitle"><c:out value="${noJoined.descripcion}" /></h6>
+	                                            	<b>Docente: </b><c:out value="${noJoined.docente}" />
+	                                            	<form action="<%=request.getContextPath()%>/dashboard" method="post">
+	                                            		<input name="id_aula" type="hidden" value="<c:out value="${noJoined.id}" />">
+	                                            		<input name="action" type="hidden" value="join">
+	                                            		<button class="btn btn-primary" type="submit" style="width: 100%;">Unirse</button>
+	                                            	</form>
+	                                            	
+	                                            	<!--  <td><button (click)="updateTodo(todo.id)" class="btn btn-success">Update</button>
+				          							<button (click)="deleteTodo(todo.id)" class="btn btn-warning">Delete</button></td> -->
+	                                            </div>
+	                                        </div>
+	                                    </div>
+									</c:forEach>
+									
+	                              </div>
+	                          </div>
+	                            
+	                   		</c:if>
+	                            
+	                        <!-- Docentes -->
+	                        <c:if test="${user_tipo == 2}">
+         					
+         					<div class="tab-pane tabs-animation fade show active" id="tab-content-1" role="tabpanel">
                                 <div class="row">
-                            <!-- Asignaturas sin cursar -->
-                               	<c:forEach var="noJoined" items="${listNoTodo}">
-									<div class="col-md-6">
-                                        <div class="main-card mb-3 card"><img width="100%" src="https://www.euneighbours.eu/sites/default/files/styles/node_image_wide/public/2018-09/Office%20compiter%20documents%20IT%20-%20Unsplash.jpg?itok=an6eZhR2">
-                                            <div class="card-body">
-                                            	<h5 class="card-title"><c:out value="${noJoined.asignatura}" /></h5>
-                                            	<h6 class="card-subtitle"><c:out value="${noJoined.descripcion}" /></h6>
-                                            	<b>Docente: </b><c:out value="${noJoined.docente}" />
-                                            	<form action="<%=request.getContextPath()%>/dashboard" method="post">
-                                            		<input name="id_aula" type="hidden" value="<c:out value="${noJoined.id}" />">
-                                            		<input name="action" type="hidden" value="join">
-                                            		<button class="btn btn-primary" type="submit" style="width: 100%;">Unirse</button>
-                                            	</form>
-                                            	
-                                            	<!--  <td><button (click)="updateTodo(todo.id)" class="btn btn-success">Update</button>
-			          							<button (click)="deleteTodo(todo.id)" class="btn btn-warning">Delete</button></td> -->
-                                            </div>
-                                        </div>
-                                    </div>
-								</c:forEach>
-								
-                                </div>
-                            </div>
+                              			
+	                        	<!-- Asignaturas en curso -->
+	                        		<c:forEach var="joined" items="${listTodo}">
+										<div class="col-md-6">
+	                                        <div class="main-card mb-3 card"><img width="100%" src="https://www.euneighbours.eu/sites/default/files/styles/node_image_wide/public/2018-09/Office%20compiter%20documents%20IT%20-%20Unsplash.jpg?itok=an6eZhR2">
+	                                            <div class="card-body">
+	                                            	<h5 class="card-title"><c:out value="${joined.asignatura}" /></h5>
+	                                            	<h6 class="card-subtitle"><c:out value="${joined.descripcion}" /></h6>
+	                                            	<b>Docente: </b><c:out value="${joined.docente}" />
+	                                                <form action="<%=request.getContextPath()%>/dashboard" method="post">
+	                                            		<input name="id_aula" type="hidden" value="<c:out value="${joined.id}" />">
+	                                            		<input name="action" type="hidden" value="disjoin">
+	                                            	</form>
+	                                            	
+	                                            	<!--  <td><button (click)="updateTodo(todo.id)" class="btn btn-success">Update</button>
+				          							<button (click)="deleteTodo(todo.id)" class="btn btn-warning">Delete</button></td> -->
+	                                            </div>
+	                                        </div>
+	                                    </div>
+									</c:forEach>
+	          
+	                             </div>
+	                         </div>
+         					
+         					</c:if>
                             
                         </div>
                     </div>

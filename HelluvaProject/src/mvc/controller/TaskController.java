@@ -2,7 +2,7 @@ package mvc.controller;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.io.PrintWriter;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -30,9 +30,12 @@ import mvc.model.dao.LoginBean;
 /**
  * Servlet implementation class TaskController
  */
-@MultipartConfig(location="/tmp", fileSizeThreshold=1024*1024,
-maxFileSize=1024*1024*5, maxRequestSize=1024*1024*5*5)
 @WebServlet("/tasks")
+@MultipartConfig(
+		fileSizeThreshold=1024*1024,
+		maxFileSize=1024*1024*5,
+		maxRequestSize=1024*1024*5*3
+)
 public class TaskController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	HttpSession session;
@@ -41,7 +44,8 @@ public class TaskController extends HttpServlet {
 	LoginBean user;
 	ClassroomDao classroomDao;
 	Aula aula;
-       
+    
+	int aula_id;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -63,6 +67,14 @@ public class TaskController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		session = request.getSession();
+		
+		if(request.getParameter("id")!=null) {
+			aula_id=(int)Integer.valueOf(request.getParameter("id"));
+		}
+		if(request.getParameter("message")!=null) {
+			request.setAttribute("message", 0);
+		}
+		
 		try {
 			if(session.getAttribute("user")!=null) {
 				String username = session.getAttribute("user").toString();
@@ -70,18 +82,15 @@ public class TaskController extends HttpServlet {
 				String user_tipo="";
 				user = logindao.getUser(username, tipo);
 				request.setAttribute("user", user);
-				if(tipo == 1) {
-					user_tipo = "Estudiante";
-				} else if(tipo == 2) {
-					user_tipo = "Docente";
+				request.setAttribute("user_tipo", tipo);
+				if(tipo==1) {
+					listCourse(request,response,user.getId());
+				} else if(tipo==2) {
+					listCourseDoc(request,response,user.getId());
 				}
-				request.setAttribute("user_tipo", user_tipo);
-				listCourse(request,response,user.getId());
 				
-				if(request.getParameter("id")!=null) {
-					GetCourseById(request,response);
-					listTask(request,response);
-				}
+				GetCourseById(request,response);
+				listTask(request,response);
 				
 				RequestDispatcher dispatcher = request.getRequestDispatcher("views/task.jsp");
 				dispatcher.include(request, response);
@@ -98,28 +107,56 @@ public class TaskController extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
+		session = request.getSession();
+		
+		String root="";
+		String name="";
+		if(request.getParameter("action")!=null) {
+			String action = request.getParameter("action").toString();
+			if(action.equalsIgnoreCase("set_task")) {
+				RequestDispatcher dispatcher = request.getRequestDispatcher("views/task_form.jsp");
+				dispatcher.include(request, response);
+				return;
+			}
+		}
 		if(ServletFileUpload.isMultipartContent(request)){
             try {
-                List <FileItem> multiparts = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
-                for(FileItem item : multiparts){
+                List <FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
+                String task_set="";
+                String url="";
+                for(FileItem item : items){
                     if(!item.isFormField()){
-                        String name = new File(item.getName()).getName();
-                        item.write( new File("c:/Upload" + File.separator + name));
+                    	//root = getServletContext().getContextPath();
+                    	root = "C:/Users/RandomUser/git/desarrollo/HelluvaProject";
+                        name = new File(item.getName()).getName();
+                        item.write( new File(root + "/WebContent/assets/Upload" + File.separator + name));
+                    } else {
+                    	if(item.getFieldName().equalsIgnoreCase("id")) {
+                    		aula_id = (int)Integer.valueOf(item.getString());
+                    	}
+                    	if(item.getFieldName().equalsIgnoreCase("task_set")) {
+                    		task_set = item.getString();
+                    	}
                     }
                 }
-               //File uploaded successfully
-               request.setAttribute("gurumessage", "File Uploaded Successfully");
+                if(!task_set.isEmpty() || !url.isEmpty()) {
+                	try {
+                		upTask(request,response,task_set,url);
+                	} catch (SQLException ex) {
+            			throw new ServletException(ex);
+            		}
+                }
+            
             } catch (Exception ex) {
-               request.setAttribute("gurumessage", "File Upload Failed due to " + ex);
-            }         		
+               request.setAttribute("message", 2);
+            }
         }else{
-
-            request.setAttribute("gurumessage","No File found");
+            request.setAttribute("message", 3);
         }
         doGet(request,response);
-
     }
 
 	
@@ -129,23 +166,27 @@ public class TaskController extends HttpServlet {
 		request.setAttribute("listTodo", listTodo);
 	}
 	
+	private void listCourseDoc(HttpServletRequest request, HttpServletResponse response,int id)
+			throws SQLException, IOException, ServletException {
+		List<Aula> listTodo = asignaturaDAO.selectAllCursosDoc(id);
+		request.setAttribute("listTodo", listTodo);
+	}
+	
 	private void GetCourseById(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, IOException, ServletException {
-		int aula_id = (int)Integer.valueOf(request.getParameter("id"));
 		aula = classroomDao.selectAulaById(aula_id);
 		request.setAttribute("aula", aula);
 	}
 	
 	private void listTask(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, IOException, ServletException {
-		int aula_id = (int)Integer.valueOf(request.getParameter("id"));
 		List<TareaSet> listTareaSet = classroomDao.selectTasks(aula_id);
 		request.setAttribute("listTareaSet", listTareaSet);
 	}
 	
-	private void upTask(HttpServletRequest request, HttpServletResponse response, String url)
+	private void upTask(HttpServletRequest request, HttpServletResponse response, String task_set, String url)
 			throws SQLException, IOException, ServletException {
-		int tareasset = (int)Integer.valueOf(request.getParameter("task_set"));
+		int tareasset = (int)Integer.valueOf(task_set);
 		int alumno_id = (int)Integer.valueOf(session.getAttribute("user_id").toString());
 		
 		TareaUp task = new TareaUp();
@@ -157,13 +198,19 @@ public class TaskController extends HttpServlet {
 			
 			int result = classroomDao.upTask(task);
 			if(result == 1) {
-				request.setAttribute("NOTIFICATION", "Tarea entregada!");
+				request.setAttribute("message", 1);
 			}
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	private void setTask(HttpServletRequest request, HttpServletResponse response, String task_set, String url)
+			throws SQLException, IOException, ServletException {
+		RequestDispatcher dispatcher = request.getRequestDispatcher("views/login.jsp");
+		dispatcher.include(request, response);
 	}
 
 }

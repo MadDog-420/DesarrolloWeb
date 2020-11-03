@@ -83,14 +83,13 @@ public class DashboardController extends HttpServlet {
 				user = logindao.getUser(username, tipo);
 				session.setAttribute("user_id", user.getId());
 				request.setAttribute("user", user);
-				if(tipo == 1) {
-					user_tipo = "Estudiante";
-				} else if(tipo == 2) {
-					user_tipo = "Docente";
+				request.setAttribute("user_tipo", tipo);
+				if(tipo==1) {
+					listCourse(request,response,user.getId());
+					listNoCourse(request,response,user.getId());
+				} else if(tipo==2) {
+					listCourseDoc(request,response,user.getId());
 				}
-				request.setAttribute("user_tipo", user_tipo);
-				listCourse(request,response,user.getId());
-				listNoCourse(request,response,user.getId());
 				RequestDispatcher dispatcher = request.getRequestDispatcher("views/dashboard.jsp");
 				dispatcher.include(request, response);
 			} else {
@@ -106,6 +105,12 @@ public class DashboardController extends HttpServlet {
 	private void listCourse(HttpServletRequest request, HttpServletResponse response,int id)
 			throws SQLException, IOException, ServletException {
 		List<Aula> listTodo = asignaturaDAO.selectAllCursos(id);
+		request.setAttribute("listTodo", listTodo);
+	}
+	
+	private void listCourseDoc(HttpServletRequest request, HttpServletResponse response,int id)
+			throws SQLException, IOException, ServletException {
+		List<Aula> listTodo = asignaturaDAO.selectAllCursosDoc(id);
 		request.setAttribute("listTodo", listTodo);
 	}
 	

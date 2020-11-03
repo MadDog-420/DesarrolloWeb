@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import mvc.model.classes.Aula;
@@ -17,8 +18,11 @@ public class ClassroomDao {
 	
 	private static final String SELECT_SECTION_ID = "select cursos.nombre,aulas.descripcion from `aulas` INNER JOIN `cursos` ON aulas.curso = cursos.id WHERE aulas.id = ?";
 	private static final String SELECT_MATERIAL = "select * from `materiales` WHERE aula = ?";
+	private static final String UP_MATERIAL = "INSERT INTO `materials` (id,aula,titulo,descripcion,url) VALUES (NULL, ?, ?, ?, ?);";
 	private static final String SELECT_TASK = "select * from `tareasset` WHERE aula = ?";
+	private static final String SELECT_TASK_COMPLETE = "select * from `tareasup` INNER JOIN `tareasset` ON tareasup.tareasset = tareasset.id WHERE tareasset.aula = ?";
 	private static final String UP_TASK = "INSERT INTO `tareasup` (id,tareasset,alumno,url) VALUES (NULL, ?, ?, ?);";
+	private static final String SET_TASK = "INSERT INTO `tareasset` (id,aula,titulo,descripcion) VALUES (NULL, ?, ?, ?);";
 	
 	public ClassroomDao() {}
 	
@@ -92,6 +96,7 @@ public class ClassroomDao {
 
 		// using try-with-resources to avoid closing resources (boiler plate code)
 		List<TareaSet> tareas_set = new ArrayList<>();
+		List<Integer> tareas_set_complete = new ArrayList<>();
 
 		// Step 1: Establishing a Connection
 		try (Connection connection = JDBCUtils.getConnection();
@@ -99,9 +104,13 @@ public class ClassroomDao {
 				// Step 2:Create a statement using connection object
 				PreparedStatement preparedStatement = connection.prepareStatement(SELECT_TASK);) {
 			preparedStatement.setInt(1, id);
+			PreparedStatement preparedStatement2 = connection.prepareStatement(SELECT_TASK_COMPLETE);
+			preparedStatement2.setInt(1, id);
 			System.out.println(preparedStatement);
+			System.out.println(preparedStatement2);
 			// Step 3: Execute the query or update query
 			ResultSet rs = preparedStatement.executeQuery();
+			ResultSet rs2 = preparedStatement2.executeQuery();
 
 			// Step 4: Process the ResultSet object.
 			while (rs.next()) {
@@ -109,8 +118,25 @@ public class ClassroomDao {
 				int id_aula = rs.getInt("aula");
 				String titulo = rs.getString("titulo");
 				String descripcion = rs.getString("descripcion");
-				tareas_set.add(new TareaSet(id_tarea,id_aula,titulo,descripcion));
+				boolean estado = false;
+				tareas_set.add(new TareaSet(id_tarea,id_aula,titulo,descripcion,estado));
 			}
+			while (rs2.next()) {
+				int id_tarea = rs.getInt("id");
+				tareas_set_complete.add(id_tarea);
+			}
+			
+			if(!tareas_set_complete.isEmpty()) {
+				for(int i=0; i<tareas_set_complete.size(); i++) {
+					int item_estado = tareas_set_complete.get(i);
+					for(int j=0; j<tareas_set.size(); j++) {
+						if(item_estado==tareas_set.get(i).getId()) {
+							tareas_set.get(i).setEstado(true);
+						}
+					}
+				}
+			}
+			
 			
 		} catch (SQLException exception) {
 			JDBCUtils.printSQLException(exception);
@@ -128,6 +154,28 @@ public class ClassroomDao {
 			preparedStatement.setInt(1, tarea_al.getTareasset());
 			preparedStatement.setInt(2, tarea_al.getAlumno());
 			preparedStatement.setString(3, tarea_al.getUrl());
+
+			System.out.println(preparedStatement);
+			// Step 3: Execute the query or update query
+			result = preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			// process sql exception
+			JDBCUtils.printSQLException(e);
+		}
+		return result;
+	}
+	
+	public int upMaterial(Material material) throws ClassNotFoundException {
+
+		int result = 0;
+		try (Connection connection = JDBCUtils.getConnection();
+				// Step 2:Create a statement using connection object
+				PreparedStatement preparedStatement = connection.prepareStatement(UP_MATERIAL)) {
+			preparedStatement.setInt(1, material.getAula());
+			preparedStatement.setString(2, material.getTitulo());
+			preparedStatement.setString(3, material.getDescripcion());
+			preparedStatement.setString(3, material.getUrl());
 
 			System.out.println(preparedStatement);
 			// Step 3: Execute the query or update query

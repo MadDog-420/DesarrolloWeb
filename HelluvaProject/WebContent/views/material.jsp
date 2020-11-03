@@ -98,7 +98,12 @@
 										<c:out value='${user.nombre}' /> <c:out value='${user.apellidos}' />
                                     </div>
                                     <div class="widget-subheading">
-         								<c:out value='${user_tipo}'/>
+         								<c:if test="${user_tipo == 1}">
+         									Estudiante
+         								</c:if>
+         								<c:if test="${user_tipo == 2}">
+         									Docente
+         								</c:if>
                                     </div>
                                 </div>
                                 <div class="widget-content-right header-user-info ml-3">
@@ -432,6 +437,8 @@
                         <div class="">
                             <div class="row">
                                 <div class="col-md-12">
+                                
+                                <c:if test="${user_tipo == 1}">
                                     
                                     <!-- List materials -->
                                     <c:forEach var="materials" items="${listMaterial}">
@@ -452,6 +459,32 @@
                                     
                                     </c:forEach>
                                     <!-- /List materials -->
+                                    
+                                </c:if>
+                                
+                                <c:if test="${user_tipo == 2}">
+                                
+                                	<!-- List materials -->
+                                    <c:forEach var="materials" items="${listMaterial}">
+                                    
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><c:out value='${materials.titulo}' /></h5>
+                                            <div class="collapse" id="mat-${materials.id}" style="">
+                                            	<p><c:out value='${materials.descripcion}' /></p>
+                                                <div id="view-${materials.id}" style=""></div>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" data-toggle="collapse" href="#mat-${materials.id}" class="btn btn-primary collapsed" aria-expanded="false">Toggle</button>
+                                        </div>
+                                    </div>
+                                    <script>PDFObject.embed("${pageContext.request.contextPath}/assets/Material/<c:out value='${materials.url}'/>.pdf", "#view-${materials.id}");</script>
+                                    
+                                    </c:forEach>
+                                    <!-- /List materials -->
+                                
+                                </c:if>
                                    
                                 </div>
                             </div>

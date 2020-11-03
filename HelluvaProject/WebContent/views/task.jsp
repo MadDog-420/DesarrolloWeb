@@ -13,32 +13,46 @@
     <meta name="description" content="Wide selection of cards with multiple styles, borders, actions and hover effects.">
     <meta name="msapplication-tap-highlight" content="no">
 	<link href="${pageContext.request.contextPath}/views/CSS/main.css" rel="stylesheet">
+	<script type="text/javascript" src="${pageContext.request.contextPath}/views/JS/confetti.js"></script>
 	<script src="https://kit.fontawesome.com/b7cb90495e.js" crossorigin="anonymous"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.2.4/pdfobject.min.js" integrity="sha512-mW7siBAOOJTkMl77cTke1Krn+Wz8DJrjMzlKaorrGeGecq0DPUq28KgMrX060xQQOGjcl7MSSep+/1FOprNltw==" crossorigin="anonymous"></script>
-	<!--<script>
+	<script>
 		$(document).ready(function() {
-			$('a.curso').click(function(event) {
+			$('.set-task').click(function(event) {
 				console.log("clic en curso");
-				event.preventDefault();
-				var url = ($(this).attr('href'));
-				var id = getURLParameter(url, 'id');
+				
 				// Si en vez de por post lo queremos hacer por get, cambiamos el $.post por $.get
 				$.ajax({
-					url: 'course',
+					type: "POST",
+					url: 'tasks',
+					dataType: "html",
 					data : {
-						id_curse: id
+						action: "set_task"
 					},
 					success : function(responseText) {
-						$('#tab-content-1').html(responseText);
+						$('.col-md-12').html(responseText);
 					}
 				});
 			});
 		});
-		function getURLParameter(url, name) {
-		    return (RegExp(name + '=' + '(.+?)(&|$)').exec(url)||[,null])[1];
-		}
-	</script>-->
+		
+	</script>
+	<c:if test = "${message==1}">
+	     <script type="text/javascript">
+				$(document).ready(function() {
+					toastr.success('Tarea entregada');
+					startConfetti();
+				});
+		 </script>
+	</c:if>
+	<c:if test = "${message>1}">
+	     <script type="text/javascript">
+				$(document).ready(function() {
+					toastr.warning('Tarea NO entregada');
+				});
+		</script>
+	</c:if>
 </head>
 <style>
 	.pdfobject-container { height: 30rem; border: 1rem solid rgba(0,0,0,.1); }
@@ -98,7 +112,12 @@
 										<c:out value='${user.nombre}' /> <c:out value='${user.apellidos}' />
                                     </div>
                                     <div class="widget-subheading">
-         								<c:out value='${user_tipo}'/>
+                                    	<c:if test="${user_tipo == 1}">
+         									Estudiante
+         								</c:if>
+         								<c:if test="${user_tipo == 2}">
+         									Docente
+         								</c:if>
                                     </div>
                                 </div>
                                 <div class="widget-content-right header-user-info ml-3">
@@ -432,6 +451,8 @@
                         <div class="">
                             <div class="row">
                                 <div class="col-md-12">
+                                
+                                <c:if test="${user_tipo==1}">
                                     
                                     <!-- List tareas -->
                                     <c:forEach var="tasks" items="${listTareaSet}">
@@ -461,6 +482,44 @@
                                     
                                     </c:forEach>
                                     <!-- /List tareas -->
+                                    
+                               	</c:if>
+                               		
+                               	<c:if test="${user_tipo == 2}">
+                               	
+                               		<button class="mb-2 mr-2 btn btn-primary set-task">Agregar</button>
+                               		
+                               		<!-- List tareas -->
+                                    <c:forEach var="tasks" items="${listTareaSet}">
+                                    
+                                    <div class="main-card mb-3 card">
+                                        <div class="card-body">
+                                            <h5 class="card-title"><c:out value='${tasks.titulo}' /></h5>
+                                            <div class="collapse" id="task-${tasks.id}" style="">
+                                            	<form action="<%=request.getContextPath()%>/set_elements" method="post">
+		                                            <p><c:out value='${tasks.descripcion}' /></p>
+		                                            <div class="position-relative row form-check">
+		                                                <div class="col-sm-10 offset-sm-2">
+		                                                	<input type="hidden" name="id" value="${tasks.id}">
+		                                                	<input type="hidden" name="id_aula" value="${aula.id}">
+		                                                	<input type="hidden" name="titulo" value="${tasks.titulo}">
+		                                                	<input type="hidden" name="descripcion" value="${tasks.descripcion}">
+		                                                	<input type="hidden" name="tipo" value="task">
+		                                                    <button type="submit" class="btn btn-secondary update-task">Actualizar</button>
+		                                                </div>
+		                                            </div>
+                                        		</form>
+                                            </div>
+                                        </div>
+                                        <div class="card-footer">
+                                            <button type="button" data-toggle="collapse" href="#task-${tasks.id}" class="btn btn-primary collapsed" aria-expanded="false">Ver tarea</button>
+                                        </div>
+                                    </div>
+                                    
+                                    </c:forEach>
+                                    <!-- /List tareas -->
+                               		
+                               	</c:if>
                                    
                                 </div>
                             </div>

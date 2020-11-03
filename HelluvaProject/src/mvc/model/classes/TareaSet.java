@@ -5,15 +5,17 @@ public class TareaSet {
 	private int aula;
 	private String titulo;
 	private String descripcion;
+	private boolean estado;
 	
 	public TareaSet() {}
 
-	public TareaSet(int id, int aula, String titulo, String descripcion) {
+	public TareaSet(int id, int aula, String titulo, String descripcion, boolean estado) {
 		super();
 		this.id = id;
 		this.aula = aula;
 		this.titulo = titulo;
 		this.descripcion = descripcion;
+		this.estado = estado;
 	}
 
 	public int getId() {
@@ -47,5 +49,14 @@ public class TareaSet {
 	public void setDescripcion(String descripcion) {
 		this.descripcion = descripcion;
 	}
+
+	public boolean isEstado() {
+		return estado;
+	}
+
+	public void setEstado(boolean estado) {
+		this.estado = estado;
+	}
+	
 	
 }
