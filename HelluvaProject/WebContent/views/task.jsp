@@ -35,10 +35,26 @@
 					}
 				});
 			});
+			$('.update-task').click(function(event) {
+				console.log("clic en curso");
+				
+				// Si en vez de por post lo queremos hacer por get, cambiamos el $.post por $.get
+				$.ajax({
+					type: "POST",
+					url: 'tasks',
+					dataType: "html",
+					data : {
+						action: "update_task"
+					},
+					success : function(responseText) {
+						$('.col-md-12').html(responseText);
+					}
+				});
+			});
 		});
 		
 	</script>
-	<c:if test = "${message==1}">
+	<c:if test = "${message == 1}">
 	     <script type="text/javascript">
 				$(document).ready(function() {
 					toastr.success('Tarea entregada');
@@ -46,10 +62,24 @@
 				});
 		 </script>
 	</c:if>
-	<c:if test = "${message>1}">
+	<c:if test = "${message == 2}">
 	     <script type="text/javascript">
 				$(document).ready(function() {
-					toastr.warning('Tarea NO entregada');
+					toastr.warning('No se pudo entregar la tarea');
+				});
+		</script>
+	</c:if>
+	<c:if test = "${message == 3}">
+	     <script type="text/javascript">
+				$(document).ready(function() {
+					toastr.warning('Tarea asignada');
+				});
+		</script>
+	</c:if>
+	<c:if test = "${message == 4}">
+	     <script type="text/javascript">
+				$(document).ready(function() {
+					toastr.warning('No se pudo asignar la tarea');
 				});
 		</script>
 	</c:if>
@@ -463,8 +493,8 @@
                                             <div class="collapse" id="task-${tasks.id}" style="">
                                             	<form action="<%=request.getContextPath()%>/tasks" method="post" enctype="multipart/form-data">
 		                                            <p><c:out value='${tasks.descripcion}' /></p>
-		                                            <div class="position-relative row form-check">
-		                                                <div class="col-sm-10 offset-sm-2">
+		                                            <div class="position-relative row">
+		                                                <div class="col-sm-10">
 		                                                	<input type="hidden" name="id" value="${aula.id}">
 		                                                	<input type="hidden" name="upload">
 		                                                	<input type="hidden" name="task_set" value="${tasks.id}">
@@ -498,8 +528,8 @@
                                             <div class="collapse" id="task-${tasks.id}" style="">
                                             	<form action="<%=request.getContextPath()%>/set_elements" method="post">
 		                                            <p><c:out value='${tasks.descripcion}' /></p>
-		                                            <div class="position-relative row form-check">
-		                                                <div class="col-sm-10 offset-sm-2">
+		                                            <div class="position-relative row">
+		                                                <div class="col-sm-10">
 		                                                	<input type="hidden" name="id" value="${tasks.id}">
 		                                                	<input type="hidden" name="id_aula" value="${aula.id}">
 		                                                	<input type="hidden" name="titulo" value="${tasks.titulo}">

@@ -187,5 +187,26 @@ public class ClassroomDao {
 		}
 		return result;
 	}
+	
+	public int setTask(TareaSet tareaset) throws ClassNotFoundException {
+
+		int result = 0;
+		try (Connection connection = JDBCUtils.getConnection();
+				// Step 2:Create a statement using connection object
+				PreparedStatement preparedStatement = connection.prepareStatement(SET_TASK)) {
+			preparedStatement.setInt(1, tareaset.getAula());
+			preparedStatement.setString(2, tareaset.getTitulo());
+			preparedStatement.setString(3, tareaset.getDescripcion());
+
+			System.out.println(preparedStatement);
+			// Step 3: Execute the query or update query
+			result = preparedStatement.executeUpdate();
+
+		} catch (SQLException e) {
+			// process sql exception
+			JDBCUtils.printSQLException(e);
+		}
+		return result;
+	}
 
 }

@@ -44,7 +44,6 @@ public class TaskController extends HttpServlet {
 	LoginBean user;
 	ClassroomDao classroomDao;
 	Aula aula;
-    
 	int aula_id;
     /**
      * @see HttpServlet#HttpServlet()
@@ -114,14 +113,7 @@ public class TaskController extends HttpServlet {
 		
 		String root="";
 		String name="";
-		if(request.getParameter("action")!=null) {
-			String action = request.getParameter("action").toString();
-			if(action.equalsIgnoreCase("set_task")) {
-				RequestDispatcher dispatcher = request.getRequestDispatcher("views/task_form.jsp");
-				dispatcher.include(request, response);
-				return;
-			}
-		}
+		
 		if(ServletFileUpload.isMultipartContent(request)){
             try {
                 List <FileItem> items = new ServletFileUpload(new DiskFileItemFactory()).parseRequest(request);
@@ -130,9 +122,10 @@ public class TaskController extends HttpServlet {
                 for(FileItem item : items){
                     if(!item.isFormField()){
                     	//root = getServletContext().getContextPath();
-                    	root = "C:/Users/RandomUser/git/desarrollo/HelluvaProject";
+                    	root = "C:\\Users\\RandomUser\\git\\desarrollo\\HelluvaProject";
                         name = new File(item.getName()).getName();
-                        item.write( new File(root + "/WebContent/assets/Upload" + File.separator + name));
+                        url = item.getName();
+                        item.write( new File(root + "\\WebContent\\assets\\Upload" + File.separator + name));
                     } else {
                     	if(item.getFieldName().equalsIgnoreCase("id")) {
                     		aula_id = (int)Integer.valueOf(item.getString());
@@ -142,7 +135,7 @@ public class TaskController extends HttpServlet {
                     	}
                     }
                 }
-                if(!task_set.isEmpty() || !url.isEmpty()) {
+                if(!task_set.isEmpty() && !url.isEmpty()) {
                 	try {
                 		upTask(request,response,task_set,url);
                 	} catch (SQLException ex) {
@@ -153,9 +146,38 @@ public class TaskController extends HttpServlet {
             } catch (Exception ex) {
                request.setAttribute("message", 2);
             }
-        }else{
-            request.setAttribute("message", 3);
         }
+		if(request.getParameter("action")!=null) {
+			String action = request.getParameter("action").toString();
+			switch(action) {
+			case "set_task":
+				RequestDispatcher dispatcher = request.getRequestDispatcher("views/set_task_form.jsp");
+				request.setAttribute("aula_id", aula_id);
+				dispatcher.include(request, response);
+				return;
+			case "new_task":
+				try {
+            		setTask(request,response);
+            	} catch (SQLException ex) {
+            		request.setAttribute("message", 4);
+        			throw new ServletException(ex);
+        		}
+				break;
+			case "update_task":
+				RequestDispatcher dispatcher2 = request.getRequestDispatcher("views/upd_task_form.jsp");
+				request.setAttribute("aula_id", aula_id);
+				dispatcher2.include(request, response);
+				return;
+			case "upd_task":
+				try {
+            		setTask(request,response);
+            	} catch (SQLException ex) {
+            		request.setAttribute("message", 4);
+        			throw new ServletException(ex);
+        		}
+				break;
+			}
+		}
         doGet(request,response);
     }
 
@@ -207,10 +229,30 @@ public class TaskController extends HttpServlet {
 		}
 	}
 	
-	private void setTask(HttpServletRequest request, HttpServletResponse response, String task_set, String url)
+	private void setTask(HttpServletRequest request, HttpServletResponse response)
 			throws SQLException, IOException, ServletException {
-		RequestDispatcher dispatcher = request.getRequestDispatcher("views/login.jsp");
-		dispatcher.include(request, response);
+		
+		aula_id = (int)Integer.valueOf(request.getParameter("id_aula"));
+		String titulo = request.getParameter("titulo").toString();
+		String descripcion = request.getParameter("descripcion").toString();
+		
+		TareaSet taskToSet = new TareaSet();
+		taskToSet.setAula(aula_id);
+		taskToSet.setTitulo(titulo);
+		taskToSet.setDescripcion(descripcion);
+		
+		try {
+			
+			int result = classroomDao.setTask(taskToSet);
+			if(result == 1) {
+				request.setAttribute("message", 3);
+			}
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 }
