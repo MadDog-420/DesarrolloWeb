@@ -23,7 +23,7 @@ public class navegador{
 	private String content;
 
 	public String outcome(){
-        
+     
         FacesContext fc = FacesContext.getCurrentInstance();
         this.page = getPageParam(fc);
         return "page";
